@@ -6,26 +6,30 @@ import javax.persistence.*;
 @Table(name = "album")
 public class Album {
 
+    //attributs
     @Id
-    private Long id;
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "AlbumId")
+    private Integer id;
+    @Column(name = "Title")
     private String title;
+    @ManyToOne
+    @JoinColumn(name = "ArtistId")
+    private Artist artist;
 
-    public Album(Long id, String title) {
+    //constructeurs
+    public Album() {}
+
+    public Album(Integer id, String title, Artist artist) {
         this.id = id;
         this.title = title;
+        this.artist = artist;
     }
 
-    public Album() {
-    }
+    //getters & setters
+    public Integer getId() { return id; }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public void setId(Integer id) { this.id = id; }
 
     public String getTitle() {
         return title;
@@ -33,5 +37,13 @@ public class Album {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Artist getArtist() {
+        return artist;
+    }
+
+    public void setArtist(Artist artist) {
+        this.artist = artist;
     }
 }

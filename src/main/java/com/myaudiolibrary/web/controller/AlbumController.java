@@ -24,7 +24,7 @@ public class AlbumController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAlbum(@PathVariable Long id) throws AlbumException {
+    public void deleteAlbum(@PathVariable Integer id) throws AlbumException {
         if (id == null){
             throw new AlbumException("L'album correspondant à l'identifiant " + id + " n'a pas été trouvé");
         }
