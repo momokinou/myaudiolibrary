@@ -3,15 +3,19 @@ package com.myaudiolibrary.web.controller;
 import com.myaudiolibrary.web.model.Artist;
 import com.myaudiolibrary.web.repository.AlbumRepository;
 import com.myaudiolibrary.web.repository.ArtistRepository;
+import org.aspectj.util.GenericSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 
 @CrossOrigin
 @RestController
@@ -25,6 +29,11 @@ public class ArtistController {
     //Afficher un artiste
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
     public Artist findbyid(@PathVariable Integer id){
+        //erreur 404 si l'artiste n'existe pas
+        if (artistRepository.findById(id).isEmpty()){
+            throw new EntityNotFoundException("L'artiste avec comme id " + id + "n'a pas été trouvé");
+
+        }
         return artistRepository.findById(id).get();
     }
 
@@ -39,7 +48,11 @@ public class ArtistController {
                                          @RequestParam (value = "sortProperty") String sortProperty,
                                          @RequestParam (value = "sortDirection") String sortDirection){
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortProperty);
-        return artistRepository.findArtistByName(name, pageRequest);
+        Page<Artist> artists = artistRepository.findArtistByName(name, pageRequest);
+//        if (!artists.hasContent()){
+//            return null;
+//        }
+        return artists;
     }
 
     //Liste des artistes
@@ -62,6 +75,9 @@ public class ArtistController {
             consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public Artist newArtist(@RequestBody Artist artist) {
+//        if(!artistRepository.findByName(artist.getName()).getName().isEmpty()){
+//            throw new EntityExistsException("L'artiste existe déjà");
+//        }
         return artistRepository.save(artist);
     }
 
