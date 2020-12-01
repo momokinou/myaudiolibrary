@@ -1,12 +1,16 @@
 package com.myaudiolibrary.web.controller;
 
 import com.myaudiolibrary.web.model.Artist;
+import com.myaudiolibrary.web.repository.AlbumRepository;
 import com.myaudiolibrary.web.repository.ArtistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
@@ -15,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 public class ArtistController {
     @Autowired
     ArtistRepository artistRepository;
+    @Autowired
+    AlbumRepository albumRepository;
 
     //Afficher un artiste
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
@@ -67,4 +73,13 @@ public class ArtistController {
     public Artist updateArtist(@PathVariable Integer id, @RequestBody Artist artist){
         return artistRepository.save(artist);
     }
+
+    //Suppression d'un artiste
+    @DeleteMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteArtist(@PathVariable Integer id) {
+        albumRepository.deleteByArtistID(id);
+        artistRepository.deleteById(id);
+    }
+
 }

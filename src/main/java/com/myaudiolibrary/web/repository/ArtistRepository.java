@@ -10,6 +10,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface ArtistRepository extends JpaRepository<Artist, Integer> {
 
-    @Query("SELECT a FROM Artist a WHERE a.Name LIKE %:name%")
+    @Query("SELECT a FROM Artist a WHERE a.name LIKE %:name%")
     Page<Artist> findArtistByName(String name, Pageable pageable);
 }

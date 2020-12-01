@@ -16,12 +16,14 @@ public class AlbumController {
     @Autowired
     private AlbumRepository albumRepository;
 
+    //Ajout d'un album
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public Album createAlbum(@RequestBody Album album){
         return albumRepository.save(album);
     }
 
+    //Suppression d'un album
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAlbum(@PathVariable Integer id) throws AlbumException {
