@@ -33,7 +33,7 @@ public class ArtistController {
                                          @RequestParam (value = "sortProperty") String sortProperty,
                                          @RequestParam (value = "sortDirection") String sortDirection){
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortProperty);
-        return artistRepository.findByName(name, pageRequest);
+        return artistRepository.findArtistByName(name, pageRequest);
     }
 
     //Liste des artistes
