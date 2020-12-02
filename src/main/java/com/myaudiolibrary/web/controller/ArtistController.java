@@ -45,6 +45,7 @@ public class ArtistController {
                                          @RequestParam (value = "sortDirection") String sortDirection){
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortProperty);
         Page<Artist> artists = artistRepository.findArtistByName(name, pageRequest);
+
         return artists;
     }
 
@@ -58,6 +59,19 @@ public class ArtistController {
                                     @RequestParam (value = "sortProperty") String sortProperty,
                                     @RequestParam (value = "sortDirection") String sortDirection){
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortProperty);
+        if (page < 0){
+            //400
+            throw new IllegalArgumentException("Le paramètre page doit être positif ou nul !");
+        }
+        if (size <= 0){
+            throw new IllegalArgumentException("Le paramètre size doit être compris entre 0 et 50 !");
+        }
+        if (size > 50){
+            throw new IllegalArgumentException("Le paramètre size doit être compris entre 0 et 50 !");
+        }
+        if (!"ASC".equalsIgnoreCase(sortDirection) && !"DESC".equalsIgnoreCase(sortDirection)){
+            throw new IllegalArgumentException("Le paramètre sortDirection doit valoir ASC ou DESC !");
+        }
         return artistRepository.findAll(pageRequest);
     }
 

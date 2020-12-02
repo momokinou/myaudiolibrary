@@ -14,4 +14,6 @@ public interface AlbumRepository extends JpaRepository<Album, Integer> {
     @Query("DELETE FROM Album a WHERE a.artist.id = :id")
 
     void deleteByArtistID(@Param("id")Integer id);
+
+    Album findByTitle(String title);
 }
