@@ -59,6 +59,7 @@ public class ArtistController {
                                     @RequestParam (value = "sortProperty") String sortProperty,
                                     @RequestParam (value = "sortDirection") String sortDirection){
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortProperty);
+        //gérer les erreurs sur les valeurs de pageRequest
         if (page < 0){
             //400
             throw new IllegalArgumentException("Le paramètre page doit être positif ou nul !");
@@ -90,6 +91,8 @@ public class ArtistController {
     }
 
     //Modification d'un artiste
+    //après la sauvergarde de la modification, le front n'affiche plus ses albums. Mais ils existent toujours
+    //rafraîchir la page permet de voir comme attendu la modification du nom de l'artiste avec ses albums
     @PutMapping(
             value = "/{id}",
             consumes = "application/json",
