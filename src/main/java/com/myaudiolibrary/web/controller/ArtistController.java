@@ -46,6 +46,10 @@ public class ArtistController {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortProperty);
         Page<Artist> artists = artistRepository.findArtistByName(name, pageRequest);
 
+        //gérer l'erreur lorsque que l'on accède à la dernière page
+        if (artists.getNumberOfElements() == 0){
+            throw new IllegalArgumentException("Le paramètre page ne peut pas être supérieur au nombre total de page !");
+        }
         return artists;
     }
 
