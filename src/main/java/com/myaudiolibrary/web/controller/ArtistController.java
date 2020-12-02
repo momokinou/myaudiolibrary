@@ -64,6 +64,10 @@ public class ArtistController {
             //400
             throw new IllegalArgumentException("Le paramètre page doit être positif ou nul !");
         }
+        //gérer l'erreur lorsque que l'on accède à la dernière page
+        if (artistRepository.findAll(pageRequest).getNumberOfElements() == 0){
+            throw new IllegalArgumentException("Le paramètre page ne peut pas être supérieur au nombre total de page !");
+        }
         if (size <= 0){
             throw new IllegalArgumentException("Le paramètre size doit être compris entre 0 et 50 !");
         }
