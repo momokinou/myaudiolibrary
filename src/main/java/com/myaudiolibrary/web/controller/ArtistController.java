@@ -3,16 +3,12 @@ package com.myaudiolibrary.web.controller;
 import com.myaudiolibrary.web.model.Artist;
 import com.myaudiolibrary.web.repository.AlbumRepository;
 import com.myaudiolibrary.web.repository.ArtistRepository;
-import org.aspectj.util.GenericSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
@@ -49,9 +45,6 @@ public class ArtistController {
                                          @RequestParam (value = "sortDirection") String sortDirection){
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortProperty);
         Page<Artist> artists = artistRepository.findArtistByName(name, pageRequest);
-//        if (!artists.hasContent()){
-//            return null;
-//        }
         return artists;
     }
 
@@ -75,9 +68,10 @@ public class ArtistController {
             consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public Artist newArtist(@RequestBody Artist artist) {
-//        if(!artistRepository.findByName(artist.getName()).getName().isEmpty()){
-//            throw new EntityExistsException("L'artiste existe déjà");
-//        }
+        //erreur 409 si name existe déjà
+        if(artistRepository.findByName(artist.getName()) != null){
+            throw new EntityExistsException("L'artiste " + artist.getName() + " existe déjà");
+        }
         return artistRepository.save(artist);
     }
 

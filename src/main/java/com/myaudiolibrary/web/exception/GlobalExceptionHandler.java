@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PropertyReferenceException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String hanflePropertyReferenceException(PropertyReferenceException e){
+    public String handlePropertyReferenceException(PropertyReferenceException e){
         return "La propriété " + e.getPropertyName() + " demandée n'existe pas !";
     }
 
