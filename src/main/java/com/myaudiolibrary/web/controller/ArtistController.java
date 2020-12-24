@@ -8,13 +8,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
 @CrossOrigin
-@RestController
+@Controller
 @RequestMapping(value = "/artists")
 public class ArtistController {
     @Autowired
@@ -24,13 +26,13 @@ public class ArtistController {
 
     //Afficher un artiste
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
-    public Artist findbyid(@PathVariable Integer id){
+    public String findbyid(@PathVariable Integer id, final ModelMap model){
         //erreur 404 si l'artiste n'existe pas
         if (artistRepository.findById(id).isEmpty()){
             throw new EntityNotFoundException("L'artiste avec comme id " + id + "n'a pas été trouvé");
-
         }
-        return artistRepository.findById(id).get();
+        model.put("artist", artistRepository.findById(id).get());
+        return "detailArtist";
     }
 
     //Recherche par nom (avec Page)
@@ -38,11 +40,12 @@ public class ArtistController {
             method = RequestMethod.GET,
             produces = "application/json",
             params = {"name", "page", "size", "sortProperty", "sortDirection"})
-    public Page<Artist> findArtistByName(@RequestParam (value = "name") String name,
-                                         @RequestParam (value = "page", defaultValue = "0") Integer page,
-                                         @RequestParam (value = "size", defaultValue = "10") Integer size,
-                                         @RequestParam (value = "sortProperty") String sortProperty,
-                                         @RequestParam (value = "sortDirection") String sortDirection){
+    public String findArtistByName(@RequestParam (value = "name") String name,
+                                   @RequestParam (value = "page", defaultValue = "0") Integer page,
+                                   @RequestParam (value = "size", defaultValue = "10") Integer size,
+                                   @RequestParam (value = "sortProperty") String sortProperty,
+                                   @RequestParam (value = "sortDirection") String sortDirection,
+                                   final ModelMap model){
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortProperty);
         Page<Artist> artists = artistRepository.findArtistByName(name, pageRequest);
 
@@ -50,7 +53,8 @@ public class ArtistController {
         if (artists.getNumberOfElements() == 0){
             throw new IllegalArgumentException("Le paramètre page ne peut pas être supérieur au nombre total de page !");
         }
-        return artists;
+        model.put("artist", artists);
+        return "listeArtists";
     }
 
     //Liste des artistes
@@ -58,10 +62,11 @@ public class ArtistController {
             value = "",
             produces = "application/json",
             params = {"page", "size", "sortProperty", "sortDirection"})
-    public Page<Artist> listArtists(@RequestParam (value = "page", defaultValue = "0") Integer page,
-                                    @RequestParam (value = "size", defaultValue = "10") Integer size,
-                                    @RequestParam (value = "sortProperty") String sortProperty,
-                                    @RequestParam (value = "sortDirection") String sortDirection){
+    public String listArtists(@RequestParam (value = "page", defaultValue = "0") Integer page,
+                              @RequestParam (value = "size", defaultValue = "10") Integer size,
+                              @RequestParam (value = "sortProperty") String sortProperty,
+                              @RequestParam (value = "sortDirection") String sortDirection,
+                              final ModelMap model){
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortProperty);
         //gérer les erreurs sur les valeurs de pageRequest
         if (page < 0){
@@ -81,7 +86,8 @@ public class ArtistController {
         if (!"ASC".equalsIgnoreCase(sortDirection) && !"DESC".equalsIgnoreCase(sortDirection)){
             throw new IllegalArgumentException("Le paramètre sortDirection doit valoir ASC ou DESC !");
         }
-        return artistRepository.findAll(pageRequest);
+        model.put("artist", artistRepository.findAll(pageRequest));
+        return "listeArtists";
     }
 
     //Création d'un artiste
