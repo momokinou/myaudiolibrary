@@ -106,10 +106,7 @@ public class ArtistController {
     //Modification d'un artiste
     //après la sauvergarde de la modification, le front n'affiche plus ses albums. Mais ils existent toujours
     //rafraîchir la page permet de voir comme attendu la modification du nom de l'artiste avec ses albums
-    @PutMapping(
-            value = "/{id}",
-            consumes = "application/json",
-            produces = "application/json")
+    @PutMapping(value = "/{id}")
     public Artist updateArtist(@PathVariable Integer id, @RequestBody Artist artist){
         return artistRepository.save(artist);
     }

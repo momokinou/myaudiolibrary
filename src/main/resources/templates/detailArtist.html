@@ -52,9 +52,8 @@
 					<label for="performance" class="form-control-label">Albums</label>
 					<div class="row">
 						<div class="col-lg-10">
-							<div class="list-group">
-								<li class="list-group-item">&nbsp;Let There Be Rock</li>
-								<li class="list-group-item">&nbsp;For Those About To Rock We Salute You</li>
+							<div class="list-group" th:each="album : ${artist.albums}">
+								<li class="list-group-item" th:text="${album.title}"></li>
 							</div>
 						</div>
 						<div class="col-lg-2 text-center">
