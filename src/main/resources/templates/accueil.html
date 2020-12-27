@@ -27,9 +27,23 @@
         <li class="active"><a href="http://localhost:5366/artists?page=0&amp;size=10&amp;sortProperty=name&amp;sortDirection=ASC" class="nav-link ember-view">Liste des artistes</a></li>
       </ul>
 
-      <form role="search" class="navbar-form navbar-right" action="http://localhost:5366/artists" method="GET">
+      <form
+              role="search"
+              class="navbar-form navbar-right"
+              th:action="@{/artists}"
+      >
         <div class="form-group">
-          <input type="text" placeholder="Rechercher par nom" class="ember-text-field form-control ember-view">
+          <input type="hidden" th:value="0" name="page" />
+          <input type="hidden" th:value="10" name="size" />
+          <input type="hidden" th:value="name" name="sortProperty" />
+          <input type="hidden" th:value="ASC" name="sortDirection" />
+          <input
+                  type="text"
+                  placeholder="Rechercher par nom"
+                  class="ember-text-field form-control ember-view"
+                  th:value="${name}"
+                  name="name"
+          />
         </div>
         <button type="submit" class="btn btn-default">Rechercher</button>
       </form>
