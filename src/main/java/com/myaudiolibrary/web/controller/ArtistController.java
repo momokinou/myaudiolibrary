@@ -8,14 +8,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
-@CrossOrigin
 @Controller
 @RequestMapping(value = "/artists")
 public class ArtistController {
@@ -25,12 +26,12 @@ public class ArtistController {
     AlbumRepository albumRepository;
 
     //Afficher un artiste
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
-    public String findbyid(@PathVariable Integer id, final ModelMap model){
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public String findById(@PathVariable ("id") Integer id, final ModelMap model){
         //erreur 404 si l'artiste n'existe pas
-        if (artistRepository.findById(id).isEmpty()){
+        /*if (artistRepository.findById(id).isEmpty()){
             throw new EntityNotFoundException("L'artiste avec comme id " + id + "n'a pas été trouvé");
-        }
+        }*/
         model.put("artist", artistRepository.findById(id).get());
         return "detailArtist";
     }
@@ -38,7 +39,6 @@ public class ArtistController {
     //Recherche par nom (avec Page)
     @RequestMapping(value = "",
             method = RequestMethod.GET,
-            produces = "application/json",
             params = {"name", "page", "size", "sortProperty", "sortDirection"})
     public String findArtistByName(@RequestParam (value = "name") String name,
                                    @RequestParam (value = "page", defaultValue = "0") Integer page,
@@ -92,16 +92,15 @@ public class ArtistController {
 
     //Création d'un artiste
     @PostMapping(
-            value = "",
-            produces = "application/json",
-            consumes = "application/json")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Artist newArtist(@RequestBody Artist artist) {
+            value = "/newArtist",
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public RedirectView newArtist(Artist artist, final ModelMap model) {
         //erreur 409 si name existe déjà
         if(artistRepository.findByName(artist.getName()) != null){
             throw new EntityExistsException("L'artiste " + artist.getName() + " existe déjà");
         }
-        return artistRepository.save(artist);
+        artist = artistRepository.save(artist);
+        return new RedirectView("/artists/" + artist.getId());
     }
 
     //Modification d'un artiste
