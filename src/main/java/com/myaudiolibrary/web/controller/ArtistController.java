@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 
 @Controller
 @RequestMapping(value = "/artists")
@@ -109,16 +108,17 @@ public class ArtistController {
     //après la sauvergarde de la modification, le front n'affiche plus ses albums. Mais ils existent toujours
     //rafraîchir la page permet de voir comme attendu la modification du nom de l'artiste avec ses albums
     @PutMapping(value = "/{id}")
-    public Artist updateArtist(@PathVariable Integer id, @RequestBody Artist artist){
-        return artistRepository.save(artist);
+    public RedirectView updateArtist(@PathVariable Integer id, Artist artist){
+        artist = artistRepository.save(artist);
+        return new RedirectView("/artists/" + artist.getId());
     }
 
     //Suppression d'un artiste
     @DeleteMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteArtist(@PathVariable Integer id) {
+    public RedirectView deleteArtist(@PathVariable Integer id) {
         albumRepository.deleteByArtistID(id);
         artistRepository.deleteById(id);
+        return new RedirectView("/artists?page=0&size=10&sortProperty=name&sortDirection=ASC");
     }
 
 }

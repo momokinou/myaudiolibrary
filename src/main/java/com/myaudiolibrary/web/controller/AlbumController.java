@@ -2,15 +2,21 @@ package com.myaudiolibrary.web.controller;
 
 import com.myaudiolibrary.web.model.Album;
 import com.myaudiolibrary.web.repository.AlbumRepository;
+import com.myaudiolibrary.web.repository.ArtistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.persistence.EntityExistsException;
+import javax.persistence.SynchronizationType;
+import java.util.Optional;
 
 
-@CrossOrigin
-@RestController
+@Controller
 @RequestMapping(value = "/albums")
 public class AlbumController {
 
@@ -18,23 +24,28 @@ public class AlbumController {
     private AlbumRepository albumRepository;
 
     //Ajout d'un album
-    @RequestMapping(method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Album createAlbum(@RequestBody Album album){
+    @PostMapping(value = "", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public RedirectView createAlbum(Album album, final ModelMap model){
         //erreur 409 si Title existe déjà
         //l'ajout d'un album déjà existant ou vide provoquera cette excpetion
         //le nom du nouvel album sera présenté comme créé sur le front, mais cela est un bug venant du front
         //rafraîchir la page permet de voir correctement l'annulation de la requête
+        System.out.println(album.toString());
         if(albumRepository.findByTitle(album.getTitle()) != null){
             throw new EntityExistsException("L'album " + album.getTitle() + " existe déjà");}
-        return albumRepository.save(album);
+
+        albumRepository.save(album);
+        return new RedirectView("/artists/"  + album.getArtist().getId());
     }
 
     //Suppression d'un album
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAlbum(@PathVariable Integer id){
+    public RedirectView deleteAlbum(@PathVariable Integer id){
+        Optional<Album> album = albumRepository.findById(id);
+        if (album.isPresent()) {
         albumRepository.deleteById(id);
+        }
+        return new RedirectView("/artists/"  + album.get().getArtist().getId());
     }
 
 }
