@@ -88,6 +88,10 @@ public class ArtistController {
             throw new IllegalArgumentException("Le paramètre sortDirection doit valoir ASC ou DESC !");
         }
         model.put("artist", artistRepository.findAll(pageRequest));
+        model.put("pageNumber", page +1);
+        model.put("previousPage", page -1);
+        model.put("nextPage", page + 1);
+        model.put("end", (page) * size + artistRepository.findAll(pageRequest).getNumberOfElements());
         return "listeArtists";
     }
 
