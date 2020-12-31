@@ -45,7 +45,6 @@ public class ArtistController {
                                    @RequestParam (value = "sortProperty") String sortProperty,
                                    @RequestParam (value = "sortDirection") String sortDirection,
                                    final ModelMap model){
-        System.out.print(name);
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.fromString(sortDirection), sortProperty);
         Page<Artist> artists = artistRepository.findArtistByName(name, pageRequest);
 

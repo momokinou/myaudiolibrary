@@ -30,7 +30,6 @@ public class AlbumController {
         //l'ajout d'un album déjà existant ou vide provoquera cette excpetion
         //le nom du nouvel album sera présenté comme créé sur le front, mais cela est un bug venant du front
         //rafraîchir la page permet de voir correctement l'annulation de la requête
-        System.out.println(album.toString());
         if(albumRepository.findByTitle(album.getTitle()) != null){
             throw new EntityExistsException("L'album " + album.getTitle() + " existe déjà");}
 
